@@ -29,7 +29,7 @@ myDB(async (client) => {
   const myDataBase = await client.db('database').collection('users');
   
   passport.use(new LocalStrategy(
-    function(username, password, done) {
+    function(username, password, doneaaa) {
       myDataBase.findOne({ username: username }, function (err, user) {
         console.log('User '+ username +' attempted to log in.');
         if (err) { return done(err); }
