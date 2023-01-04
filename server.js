@@ -60,7 +60,7 @@ myDB(async (client) => {
       done(null, doc);
     });
   });
-  // Be sure to add this...
+
 }).catch((e) => {
   app.route('/').get((req, res) => {
     res.render(process.cwd() + '/views/pug/index', 
