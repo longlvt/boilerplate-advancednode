@@ -1,0 +1,4 @@
+SESSION_SECRET=<random_value>
+
+// https://stackoverflow.com/questions/55695565/error-message-mongoerror-bad-auth-authentication-failed-through-uri-string
+MONGO_URI=<MONGO_URI> 
