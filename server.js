@@ -27,6 +27,16 @@ app.use(passport.session());
 
 myDB(async (client) => {
   const myDataBase = await client.db('database').collection('users');
+
+  // Be sure to change the title
+  app.route('/').get((req, res) => {
+    // Change the response to render the Pug template
+    res.render('pug', {
+      title: 'Connected to Database',
+      message: 'Please login',
+      showLogin: true
+    });
+  });
   
   passport.use(new LocalStrategy(
     function(username, password, done) {
@@ -39,16 +49,6 @@ myDB(async (client) => {
       });
     }
   ));
-
-  // Be sure to change the title
-  app.route('/').get((req, res) => {
-    // Change the response to render the Pug template
-    res.render('pug', {
-      title: 'Connected to Database',
-      message: 'Please login',
-      showLogin: true
-    });
-  });
 
   // Serialization and deserialization here...
   passport.serializeUser((user, done) => {
