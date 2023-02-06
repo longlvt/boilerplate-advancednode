@@ -7,6 +7,7 @@ const myDB = require('./connection');
 const ObjectID = require('mongodb').ObjectID;
 const fccTesting = require('./freeCodeCamp/fcctesting.js');
 const LocalStrategy = require('passport-local');
+const bcrypt = require('bcrypt');
 
 const app = express();
 fccTesting(app); //For FCC testing purposes
