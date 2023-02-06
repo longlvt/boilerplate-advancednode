@@ -25,6 +25,12 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect('/');
+};
 myDB(async (client) => {
   const myDataBase = await client.db('database').collection('users');
 
@@ -36,6 +42,25 @@ myDB(async (client) => {
       message: 'Please login',
       showLogin: true
     });
+  });
+
+  app.route('/login').post(passport.authenticate('local', { failureRedirect: '/' }), (req, res) => {
+    res.render('/profile')
+  });
+
+  app.route('/profile').get(ensureAuthenticated, (req, res) => {
+    console.log
+    res.render('profile', {
+      username: req.user.username,
+    });
+  });
+
+  app.route('/logout').get((req, res) => {
+    req.logout(); res.redirect('/');
+  });
+
+  app.use((req, res, next) => {
+    res.status(404).type('text').send('Not Found');
   });
   
   passport.use(new LocalStrategy(
