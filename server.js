@@ -7,28 +7,32 @@ const fccTesting = require('./freeCodeCamp/fcctesting.js');
 const routes = require('./routes.js');
 const auth = require('./auth.js');
 
+const app = express();
+const http = require('http').createServer(app);
+const io = require('socket.io')(http);
+
 const passportSocketIo = require('passport.socketio');
 const cookieParser = require('cookie-parser');
 const MongoStore = require('connect-mongo')(session);
 const URI = process.env.MONGO_URI;
 const store = new MongoStore({ url: URI });
 
-const app = express();
-const http = require('http').createServer(app);
-const io = require('socket.io')(http);
-fccTesting(app); //For FCC testing purposes
 app.set('view engine', 'pug');
+
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: true,
+  saveUninitialized: true,
+  cookie: { secure: false },
+  key: 'express.sid',
+  store: store
+}));
+
+fccTesting(app); //For FCC testing purposes
 app.use('/public', express.static(process.cwd() + '/public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// app.use(session({
-//   secret: process.env.SESSION_SECRET,
-//   resave: true,
-//   saveUninitialized: true,
-//   cookie: { secure: false }
-// }));
-  
 io.use(
   passportSocketIo.authorize({
     cookieParser: cookieParser,
@@ -55,6 +59,13 @@ myDB(async (client) => {
       username: socket.request.user.username,
       currentUsers,
       connected: true
+    });
+
+    socket.on('chat message', message => {
+      io.emit('chat message', {
+        username: socket.request.user.username,
+        message
+      });
     });
 
     socket.on('disconnect', () => {
