@@ -3,6 +3,8 @@ require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
 const myDB = require('./connection');
+const passport = require('passport');
+
 const fccTesting = require('./freeCodeCamp/fcctesting.js');
 const routes = require('./routes.js');
 const auth = require('./auth.js');
@@ -18,6 +20,7 @@ const URI = process.env.MONGO_URI;
 const store = new MongoStore({ url: URI });
 
 app.set('view engine', 'pug');
+app.set('views', './views/pug');
 
 app.use(session({
   secret: process.env.SESSION_SECRET,
@@ -27,6 +30,9 @@ app.use(session({
   key: 'express.sid',
   store: store
 }));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 fccTesting(app); //For FCC testing purposes
 app.use('/public', express.static(process.cwd() + '/public'));
